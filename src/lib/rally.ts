@@ -16,7 +16,13 @@ export type RallyConfig = {
   finalizedAt?: string;
 };
 
-export type WeekMission = { week: number; title: string; body: string; finalized: boolean };
+export type MissionScoringItem = {
+  id: string;
+  label: string;
+  points: number;
+  mode: 'fixed' | 'quantity';
+};
+export type WeekMission = { week: number; title: string; body: string; finalized: boolean; items?: MissionScoringItem[] };
 export type PersonKind = 'worker' | 'youth';
 export type Person = {
   id: string;
@@ -36,6 +42,7 @@ export type Attendance = {
   present: boolean;
   guests: number;
   returned: boolean;
+  justification?: string;
 };
 export type WeeklyScore = {
   tribeId: string;
@@ -69,6 +76,7 @@ export const createDefaultMissions = (totalWeeks = 10): WeekMission[] =>
     title: `Missão da Semana ${index + 1}`,
     body: '',
     finalized: false,
+    items: [],
   }));
 
 export const defaultState: RallyState = {
