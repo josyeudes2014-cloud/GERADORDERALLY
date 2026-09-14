@@ -1,0 +1,9 @@
+{
+  "name": "Rally FJU",
+  "short_name": "Rally FJU",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#071d46",
+  "theme_color": "#103d8f",
+  "description": "Plataforma reutilizável para gestão do Rally FJU."
+}
