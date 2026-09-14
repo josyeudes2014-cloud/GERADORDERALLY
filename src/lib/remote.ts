@@ -16,7 +16,7 @@ import { onAuthStateChanged, signInWithEmailAndPassword, signOut as firebaseSign
 import { auth, db } from '../integrations/firebase/client';
 import { createDefaultMissions, defaultState, type Announcement, type Attendance, type Person, type RallyConfig, type RallyControl, type RallyState, type WeekMission, type WeeklyScore } from './rally';
 
-export type UserRole = 'admin' | 'leader' | 'viewer' | 'local-admin';
+export type UserRole = 'admin' | 'leader' | 'viewer';
 export type SessionProfile = { id: string; role: UserRole; tribeId: string | null; church: string | null; email: string | null };
 
 const rallyRef = doc(db, 'rallies', 'current');
@@ -121,7 +121,16 @@ export async function seedRemoteState(state: RallyState) {
 }
 
 export async function saveConfig(config: RallyConfig) {
-  await setDoc(rallyRef, { ...config, updatedAt: serverTimestamp() }, { merge: true });
+  const missionsSnap = await getDocs(missionsRef);
+  const existingWeeks = new Set(missionsSnap.docs.map((item) => Number(item.data().week)));
+  const batch = writeBatch(db);
+  batch.set(rallyRef, { ...config, updatedAt: serverTimestamp() }, { merge: true });
+  createDefaultMissions(config.totalWeeks).forEach((mission) => {
+    if (!existingWeeks.has(mission.week)) {
+      batch.set(doc(missionsRef, `week-${String(mission.week).padStart(2, '0')}`), mission);
+    }
+  });
+  await batch.commit();
 }
 
 export async function saveMission(mission: WeekMission) {
@@ -218,9 +227,11 @@ export async function getSessionProfile(user?: User | null): Promise<SessionProf
   const snap = await getDoc(doc(db, 'users', current.uid));
   const data = snap.exists() ? snap.data() : {};
   const fallbackRole: UserRole = current.email === 'admin@rallyfju.com' ? 'admin' : 'viewer';
+  const storedRole = data.role;
+  const role: UserRole = storedRole === 'admin' || storedRole === 'leader' || storedRole === 'viewer' ? storedRole : fallbackRole;
   return {
     id: current.uid,
-    role: (data.role ?? fallbackRole) as UserRole,
+    role,
     tribeId: data.tribeId ?? null,
     church: data.church ?? null,
     email: current.email,
