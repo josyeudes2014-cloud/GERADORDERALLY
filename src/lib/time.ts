@@ -46,6 +46,14 @@ export function getSubmissionWindowStatus(now = new Date()): SubmissionWindow {
   return { state: 'locked', label: 'Aguardando próxima rodada', detail: 'O lançamento dos líderes abre aos domingos, das 16h às 19h.', remainingMs: untilNextSundayAt(16, now) };
 }
 
+export function isSystemLockWindow(now = new Date()) {
+  const { day, hour, minute, second } = saoPauloParts(now);
+  const currentMs = ((hour * 60 + minute) * 60 + second) * 1000;
+  const closeMs = 19 * 60 * 60 * 1000;
+  const mondayUnlockMs = 7 * 60 * 60 * 1000;
+  return (day === 0 && currentMs >= closeMs) || (day === 1 && currentMs < mondayUnlockMs);
+}
+
 export function formatRemaining(ms: number) {
   const total = Math.max(0, Math.floor(ms / 1000));
   const days = Math.floor(total / 86400);
