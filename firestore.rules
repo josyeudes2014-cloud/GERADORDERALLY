@@ -21,7 +21,7 @@ service cloud.firestore {
     }
 
     function leaderTribe() {
-      return userDoc().data.triboId;
+      return userDoc().data.tribeId;
     }
 
     function control() {
