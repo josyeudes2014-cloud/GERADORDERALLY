@@ -52,10 +52,9 @@ exports.closeWeeklySubmissionWindow = onSchedule(
       }
     }
 
-    const now = new Date();
-    const lockedUntil = new Date(now.getTime());
-    lockedUntil.setDate(lockedUntil.getDate() + 1);
-    lockedUntil.setHours(7, 0, 0, 0);
+    // 19h de domingo até 7h de segunda em São Paulo = 12 horas.
+    // Usar diferença absoluta evita depender do fuso horário do runtime do servidor.
+    const lockedUntil = new Date(Date.now() + 12 * 60 * 60 * 1000);
 
     batch.set(controlRef, {
       submissionOpen: false,
