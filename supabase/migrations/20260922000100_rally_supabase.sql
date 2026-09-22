@@ -89,6 +89,7 @@ alter table public.profiles enable row level security;
 
 revoke all on public.rallies_current,public.missions,public.people,public.attendance,public.weekly_scores,public.announcements,public.system_control,public.rally_archives,public.profiles from anon,authenticated;
 grant select on public.rallies_current,public.missions,public.weekly_scores,public.announcements,public.system_control to anon,authenticated;
+grant update on public.system_control to authenticated;
 grant select,insert,update,delete on public.rallies_current,public.missions,public.people,public.attendance,public.weekly_scores,public.announcements,public.rally_archives,public.profiles to authenticated;
 
 create policy "public read rally" on public.rallies_current for select to anon,authenticated using(true);
@@ -120,6 +121,7 @@ create policy "leader update current score" on public.weekly_scores for update t
 create policy "public read announcements" on public.announcements for select to anon,authenticated using(true);
 create policy "admin manage announcements" on public.announcements for all to authenticated using((select private.is_rally_admin())) with check((select private.is_rally_admin()));
 create policy "public read control" on public.system_control for select to anon,authenticated using(true);
+create policy "admin manage control" on public.system_control for update to authenticated using((select private.is_rally_admin())) with check((select private.is_rally_admin()));
 create policy "admin read archives" on public.rally_archives for select to authenticated using((select private.is_rally_admin()));
 create policy "admin create archives" on public.rally_archives for insert to authenticated with check((select private.is_rally_admin()));
 create policy "user read profile" on public.profiles for select to authenticated using(id=(select auth.uid()) or (select private.is_rally_admin()));
