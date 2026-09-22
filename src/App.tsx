@@ -34,7 +34,7 @@ function App() {
   const [state, setState] = useState<RallyState>(() => loadLocalState());
   const [profile, setProfile] = useState<SessionProfile | null>(null);
   const [authReady, setAuthReady] = useState(false);
-  const [syncLabel, setSyncLabel] = useState('Conectando ao Firebase...');
+  const [syncLabel, setSyncLabel] = useState('Conectando ao Supabase...');
   const [tab, setTab] = useState<AdminTab>('dashboard');
   const [mobileNav, setMobileNav] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
@@ -71,8 +71,8 @@ function App() {
         if (session) { const remote = await loadRemoteState(); if (remote) updateState(remote); }
       } catch (error) { console.error(error); } finally { setAuthReady(true); }
     });
-    remoteUnsub = subscribeRemoteState((next) => { updateState(next); setSyncLabel('Sincronizado com Firebase'); }, () => setSyncLabel('Firebase conectado — acesso parcial'));
-    loadRemoteState().then((remote) => { if (remote) { updateState(remote); setSyncLabel('Sincronizado com Firebase'); } else setSyncLabel('Firebase pronto — aguardando configuração inicial'); }).catch(() => setSyncLabel('Firebase conectado — aguardando autenticação'));
+    remoteUnsub = subscribeRemoteState((next) => { updateState(next); setSyncLabel('Sincronizado com Supabase'); }, () => setSyncLabel('Supabase conectado — acesso parcial'));
+    loadRemoteState().then((remote) => { if (remote) { updateState(remote); setSyncLabel('Sincronizado com Supabase'); } else setSyncLabel('Supabase pronto — aguardando configuração inicial'); }).catch(() => setSyncLabel('Supabase conectado — aguardando autenticação'));
     return () => { authUnsub(); remoteUnsub?.(); };
     // estado inicial é usado somente para semear uma instalação vazia
     // eslint-disable-next-line react-hooks/exhaustive-deps
