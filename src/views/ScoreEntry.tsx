@@ -44,7 +44,7 @@ export default function ScoreEntry({ state, profile, busy, timeWindow, systemLoc
         <button className="button primary full" disabled={!canSubmit || busy || (!rules.length && manualPoints === '')} onClick={() => onSubmit(tribeId, finalPoints, { notes, missionTitle: mission?.title ?? '', breakdown })}><Save size={18} /> Salvar e Enviar Pontuação da Semana</button>
         {!canSubmit ? <p className="form-warning"><AlertTriangle size={15} /> O envio está indisponível neste momento.</p> : null}
       </section>
-      <aside className="score-side"><article className="panel-card compact"><span className="eyebrow">Regra automática</span><h3>Domingo, 16h → 19h</h3><p>Às 19h o Firebase fecha a rodada. Tribos sem lançamento recebem zero automaticamente e o sistema fica bloqueado até segunda, 7h.</p></article>{tribeId ? <HistoryChart scores={state.weeklyScores} tribeId={tribeId} totalWeeks={state.config.totalWeeks} /> : null}</aside>
+      <aside className="score-side"><article className="panel-card compact"><span className="eyebrow">Regra automática</span><h3>Domingo, 16h → 19h</h3><p>Às 19h o Supabase fecha a rodada. Tribos sem lançamento recebem zero automaticamente e o sistema fica bloqueado até segunda, 7h.</p></article>{tribeId ? <HistoryChart scores={state.weeklyScores} tribeId={tribeId} totalWeeks={state.config.totalWeeks} /> : null}</aside>
     </div>
   </div>;
 }
