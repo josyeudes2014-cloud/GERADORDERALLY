@@ -52,9 +52,13 @@ exports.closeWeeklySubmissionWindow = onSchedule(
       }
     }
 
-    // 19h de domingo até 7h de segunda em São Paulo = 12 horas.
-    // Usar diferença absoluta evita depender do fuso horário do runtime do servidor.
-    const lockedUntil = new Date(Date.now() + 12 * 60 * 60 * 1000);
+    // 19h de domingo em São Paulo = 22h UTC.
+    // O bloqueio termina na segunda-feira às 7h em São Paulo = 10h UTC.
+    // O horário-alvo é calculado de forma determinística para não depender
+    // do atraso eventual da execução do Cloud Scheduler.
+    const lockedUntil = new Date();
+    lockedUntil.setUTCDate(lockedUntil.getUTCDate() + 1);
+    lockedUntil.setUTCHours(10, 0, 0, 0);
 
     batch.set(controlRef, {
       submissionOpen: false,
