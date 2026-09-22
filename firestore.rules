@@ -32,8 +32,16 @@ service cloud.firestore {
       return !control().exists() || control().data.systemLocked != true;
     }
 
+    // São Paulo is UTC-3. The weekly submission window is Sunday 16:00–19:00
+    // local time, which is Sunday 19:00–22:00 UTC.
+    function weeklySubmissionWindow() {
+      return request.time.dayOfWeek() == 7 &&
+        request.time.hours() >= 19 &&
+        request.time.hours() < 22;
+    }
+
     function submissionsOpen() {
-      return control().exists() && control().data.submissionOpen == true && systemUnlocked();
+      return weeklySubmissionWindow() && systemUnlocked();
     }
 
     match /users/{uid} {
