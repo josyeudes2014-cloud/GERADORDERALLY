@@ -50,6 +50,17 @@ function App() {
 
   useEffect(() => { const interval = window.setInterval(() => setTick(Date.now()), 1000); return () => window.clearInterval(interval); }, []);
   useEffect(() => {
+    // O preview deve continuar utilizável mesmo quando o Firebase/Auth estiver lento ou indisponível.
+    // A sincronização continua em segundo plano e assume o controle assim que responder.
+    const timeout = window.setTimeout(() => {
+      setAuthReady((ready) => {
+        if (!ready) setSyncLabel('Modo local — sincronização pendente');
+        return true;
+      });
+    }, 5000);
+    return () => window.clearTimeout(timeout);
+  }, []);
+  useEffect(() => {
     let remoteUnsub: (() => void) | undefined;
     const authUnsub = subscribeAuth(async (user) => {
       try {
